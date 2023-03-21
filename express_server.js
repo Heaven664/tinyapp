@@ -20,7 +20,11 @@ function generateRandomString() {
   for (let i = 0; i < times; i++) {
     let charIndex = Math.floor(Math.random() * 36);
     let randomChar = charIndex.toString(36);
-    randomString += randomChar;
+    if (Math.random() < 0.5) {
+      randomString += randomChar.toUpperCase();
+    } else {
+      randomString += randomChar;
+    }
   }
   return randomString
 };
@@ -43,7 +47,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
+  const shortUrl = generateRandomString();
+  const fullUrl = req.body.longURL;
+  console.log(shortUrl, fullUrl);
   res.send('Ok');
 })
 
