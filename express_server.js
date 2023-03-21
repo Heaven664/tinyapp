@@ -11,6 +11,20 @@ const urlDatabase = {
 
 app.use(express.urlencoded({ extended: true }));
 
+// Generates 6 random alpha-numeric characters
+function generateRandomString() {
+  // Number of characters
+  const times = 6;
+  let randomString = ''
+  // Gets random number between 0 to 35 and generates random alpha-numeric character on base 36(0-z)
+  for (let i = 0; i < times; i++) {
+    let charIndex = Math.floor(Math.random() * 36);
+    let randomChar = charIndex.toString(36);
+    randomString += randomChar;
+  }
+  return randomString
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
