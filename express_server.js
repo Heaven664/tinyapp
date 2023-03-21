@@ -49,7 +49,7 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  console.log(shortUrl, fullUrl);
+  urlDatabase[shortUrl] = fullUrl;
   res.send('Ok');
 })
 
