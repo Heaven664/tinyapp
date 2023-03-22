@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 function generateRandomString() {
   // Number of characters
   const times = 6;
-  let randomString = ''
+  let randomString = '';
   // Gets random number between 0 to 35 and generates random alpha-numeric character on base 36(0-z)
   for (let i = 0; i < times; i++) {
     let charIndex = Math.floor(Math.random() * 36);
@@ -26,8 +26,14 @@ function generateRandomString() {
       randomString += randomChar;
     }
   }
-  return randomString
+  return randomString;
 };
+
+app.post('/login', (req, res) => {
+  let username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -51,7 +57,7 @@ app.post("/urls", (req, res) => {
   const fullUrl = req.body.longURL;
   urlDatabase[shortUrl] = fullUrl;
   res.redirect(302, `/urls/${shortUrl}`);
-})
+});
 
 app.get("/urls/new", (req, res) => {
   res.render('urls_new');
@@ -61,7 +67,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
   res.redirect('/urls');
-})
+});
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
