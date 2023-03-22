@@ -23,13 +23,43 @@
       <input
       type="text"
       name="username"
+      placeholder="Username"
+      autocomplete="off"
+      style="
+      padding: 6px 10px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 6px;
+      "
       >
-      <button type="submit">Login</button>
+      <button type="submit"
+      style="
+        font-size: 20px;
+        background-color: inherit;
+        padding: 6px 14px;
+        margin-left: 12px;
+        border: 1.5px solid black;
+        border-radius: 6px;
+        cursor: pointer;">Login</button>
     </form>
     <% } else { %>
-      <p>Logged in as: <%= username %></p>
+      <p style="
+        color: black;
+        font-size: 24px; 
+        font-weight: 250;
+        margin-bottom: 0;
+        ">Logged in as: <%= username %></p>
       <form action="/logout" method="post">
-        <button type="submit">Logout</button>
+        <button 
+        type="submit"
+        style="
+        font-size: 20px;
+        background-color: inherit;
+        padding: 6px 8px;
+        margin-left: 12px;
+        border: 1.5px solid black;
+        border-radius: 6px;
+        cursor: pointer;">Logout</button>
       </form>
       <% } %>
   </nav>
