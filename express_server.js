@@ -10,8 +10,32 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
+// middleware 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+
+function addUser(database, userId, userEmail, userPassword) {
+  database[userId] = {
+    id: userId,
+    email: userEmail,
+    password: userPassword
+  }
+}
+
 
 // Generates 6 random alpha-numeric characters
 function generateRandomString() {
@@ -40,6 +64,15 @@ app.post('/login', (req, res) => {
 app.get('/register', (req, res) => {
   const templateVars = { username: req.cookies['username'] }
   res.render('register', templateVars);
+})
+
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  addUser(users, id, email, password);
+  res.cookie('user_id', id);
+  res.redirect('/urls');
 })
 
 app.post('/logout', (req, res) => {
