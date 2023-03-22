@@ -13,13 +13,13 @@ const urlDatabase = {
 const users = {
   userRandomID: {
     id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    email: "a@a.com",
+    password: "123",
   },
   user2RandomID: {
     id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
+    email: "b@b.com",
+    password: "1234",
   },
 };
 
@@ -27,7 +27,7 @@ const users = {
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
+// Adds a new user to a database
 function addUser(database, userId, userEmail, userPassword) {
   database[userId] = {
     id: userId,
@@ -36,6 +36,17 @@ function addUser(database, userId, userEmail, userPassword) {
   }
 }
 
+// Checks if user is in a database by user's email
+function getUserByEmail(email) {
+  let user = null;
+  for (let i in users) {
+    let person = users[i];
+    if (person.email === email) {
+      user = person;
+    }
+  }
+  return user;
+}
 
 // Generates 6 random alpha-numeric characters
 function generateRandomString() {
@@ -67,9 +78,22 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
+  
+  // if user didn't provide password
+  if (!email || !password) {
+    console.log('not correct email or password')
+    return res.sendStatus(400);
+  }
+
+  // if email exist in database
+  if (getUserByEmail(email)) {
+    return res.sendStatus(400);
+  }
+
+  const id = generateRandomString();
+  // adds user to the database
   addUser(users, id, email, password);
   res.cookie('user_id', id);
   res.redirect('/urls');
