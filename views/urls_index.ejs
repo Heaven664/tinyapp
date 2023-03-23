@@ -19,6 +19,7 @@
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
+      <% if (user) { %>
       <h3>My URLs</h3>
       <table class="table">
         <thead>
@@ -62,6 +63,9 @@
            <% } %> 
         </tbody>
       </table>
+      <% } else { %>
+        <h3>Unauthorized users can not see URLs</h3>
+      <% } %>
     </main>
   </body>
 </html>

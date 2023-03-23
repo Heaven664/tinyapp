@@ -12,18 +12,18 @@ const urlDatabase = {
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW",
+    userID: "bJ48lW",
   },
 };
 
 const users = {
-  userRandomID: {
-    id: "userRandomID",
+  aJ48lW: {
+    id: "aJ48lW",
     email: "a@a.com",
     password: "123",
   },
-  user2RandomID: {
-    id: "user2RandomID",
+  bJ48l: {
+    id: "bJ48lW",
     email: "b@b.com",
     password: "1234",
   },
@@ -32,6 +32,17 @@ const users = {
 // middleware 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+
+function urlsForUser(id) {
+  const newObj = { ...urlDatabase };
+  for (let url in newObj) {
+    if (newObj[url].userID !== id) {
+      delete newObj[url];
+    }
+  }
+  return newObj;
+};
 
 // Adds a new user to a database
 function addUser(database, userId, userEmail, userPassword) {
@@ -142,20 +153,23 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const id = req.cookies['user_id'];
   const templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies['user_id']]
+    urls: urlsForUser(id),
+    user: users[id]
   };
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-    if (!req.cookies['user_id']) {
-      return res.send('unauthorized users can not shorten URLs')
-    }
+  const id = req.cookies['user_id'];
+
+  if (!id) {
+    return res.send('unauthorized users can not shorten URLs');
+  }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  urlDatabase[shortUrl] = { longURL: fullUrl};
+  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id};
   res.redirect(302, `/urls/${shortUrl}`);
 });
 
@@ -186,7 +200,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.newlongURL;
   const shortURL = req.params.id;
-  urlDatabase[shortURL] = {longURL: newURL};
+  urlDatabase[shortURL] = { longURL: newURL };
 
   res.redirect(302, '/urls');
 });
@@ -194,7 +208,7 @@ app.post("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   if (!urlDatabase[shortURL]) {
-    res.status(400).send("this URL do not exist!")
+    res.status(400).send("this URL do not exist!");
   }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
