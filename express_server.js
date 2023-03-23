@@ -189,9 +189,18 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  const userID = req.cookies['user_id'];
+  const urlID = req.params.id
+  if (!urlDatabase[urlID]) {
+    return res.status(400).send('URL does not exist!')
+  }
+  const urlOwner = urlDatabase[urlID].userID
+  if (userID !== urlOwner) {
+    return res.send("Can be accessed only by url owner!")
+  }
   const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
+    id: urlID,
+    longURL: urlDatabase[urlID].longURL,
     user: users[req.cookies['user_id']],
   };
   res.render("urls_show", templateVars);
