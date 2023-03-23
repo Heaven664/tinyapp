@@ -33,7 +33,7 @@ function addUser(database, userId, userEmail, userPassword) {
     id: userId,
     email: userEmail,
     password: userPassword
-  }
+  };
 }
 
 // Checks if user is in a database by user's email
@@ -67,28 +67,41 @@ function generateRandomString() {
 };
 
 app.post('/login', (req, res) => {
-  let username = req.body.username;
-  res.cookie('username', username);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  user = getUserByEmail(email);
+
+  // If user user not found in database
+  if (!user) {
+    return res.sendStatus(403);
+  }
+
+  // If password is not correct
+  if (user.password !== password) {
+    return res.sendStatus(403);
+  }
+
+  res.cookie('user_id', user.id);
   res.redirect('/urls');
 });
 
 app.get('/login', (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']] }
+  const templateVars = { user: users[req.cookies['user_id']] };
   res.render('login', templateVars);
 });
 
 app.get('/register', (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']] }
+  const templateVars = { user: users[req.cookies['user_id']] };
   res.render('register', templateVars);
-})
+});
 
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  
+
   // if user didn't provide password
   if (!email || !password) {
-    console.log('not correct email or password')
     return res.sendStatus(400);
   }
 
@@ -102,7 +115,7 @@ app.post('/register', (req, res) => {
   addUser(users, id, email, password);
   res.cookie('user_id', id);
   res.redirect('/urls');
-})
+});
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
@@ -118,7 +131,6 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log(users);
   const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
