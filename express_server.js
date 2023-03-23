@@ -144,6 +144,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+    if (!req.cookies['user_id']) {
+      return res.send('unauthorized users can not shorten URLs')
+    }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
   urlDatabase[shortUrl] = fullUrl;
@@ -151,6 +154,10 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+  // redirects to /urls if user is NOT logged in
+  if (!req.cookies['user_id']) {
+    return res.redirect('/urls');
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('urls_new', templateVars);
 });
