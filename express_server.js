@@ -156,7 +156,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   // redirects to /urls if user is NOT logged in
   if (!req.cookies['user_id']) {
-    return res.redirect('/urls');
+    return res.redirect('/login');
   }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('urls_new', templateVars);
