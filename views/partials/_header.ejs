@@ -46,7 +46,18 @@
       font-weight: 250;
       margin-bottom: 0;
       ">Logged in as: <%= user.email %></p>
-      <a href="/logout" class="btn btn-primary" style="margin-left: 20px;">Logout</a>
+      <form action="/logout" method="post">
+        <button 
+        type="submit"
+        style="
+        font-size: 20px;
+        background-color: inherit;
+        padding: 6px 8px;
+        margin-left: 12px;
+        border: 1.5px solid black;
+        border-radius: 6px;
+        cursor: pointer;">Logout</button>
+      </form>
       <% } %>
   </nav>
 </header>
