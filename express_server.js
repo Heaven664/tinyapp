@@ -155,7 +155,7 @@ app.post("/urls", (req, res) => {
     }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  urlDatabase[shortUrl] = fullUrl;
+  urlDatabase[shortUrl] = { longURL: fullUrl};
   res.redirect(302, `/urls/${shortUrl}`);
 });
 
@@ -177,7 +177,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.cookies['user_id']],
   };
   res.render("urls_show", templateVars);
@@ -186,7 +186,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.newlongURL;
   const shortURL = req.params.id;
-  urlDatabase[shortURL] = newURL;
+  urlDatabase[shortURL] = {longURL: newURL};
 
   res.redirect(302, '/urls');
 });
@@ -196,7 +196,7 @@ app.get("/u/:id", (req, res) => {
   if (!urlDatabase[shortURL]) {
     res.status(400).send("this URL do not exist!")
   }
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
