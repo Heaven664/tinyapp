@@ -33,7 +33,7 @@ const users = {
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
+// Returns obj with urls which have same userID
 function urlsForUser(id) {
   const newObj = { ...urlDatabase };
   for (let url in newObj) {
@@ -169,7 +169,7 @@ app.post("/urls", (req, res) => {
   }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id};
+  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id };
   res.redirect(302, `/urls/${shortUrl}`);
 });
 
@@ -183,20 +183,39 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const id = req.params.id;
-  delete urlDatabase[id];
+  const userID = req.cookies['user_id'];
+  const urlID = req.params.id;
+
+  if (!userID) {
+    return res.status(403).send('Unauthorized users can not delete urls');
+  }
+
+  if (!urlDatabase[urlID]) {
+    return res.status(400).send('URL does not exist!');
+  }
+
+  const urlOwner = urlDatabase[urlID].userID;
+  if (userID !== urlOwner) {
+    return res.send("Can be delete only by url owner!");
+  }
+  delete urlDatabase[urlID];
   res.redirect('/urls');
 });
 
 app.get("/urls/:id", (req, res) => {
   const userID = req.cookies['user_id'];
-  const urlID = req.params.id
-  if (!urlDatabase[urlID]) {
-    return res.status(400).send('URL does not exist!')
+  const urlID = req.params.id;
+  if (!userID) {
+    return res.status(403).send('Unauthorized users can not access urls');
   }
-  const urlOwner = urlDatabase[urlID].userID
+
+  if (!urlDatabase[urlID]) {
+    return res.status(400).send('URL does not exist!');
+  }
+
+  const urlOwner = urlDatabase[urlID].userID;
   if (userID !== urlOwner) {
-    return res.send("Can be accessed only by url owner!")
+    return res.send("Can be accessed only by url owner!");
   }
   const templateVars = {
     id: urlID,
@@ -207,9 +226,25 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
+  const userID = req.cookies['user_id'];
   const newURL = req.body.newlongURL;
   const shortURL = req.params.id;
-  urlDatabase[shortURL] = { longURL: newURL };
+
+  if (!userID) {
+    return res.status(403).send('Unauthorized users can not access urls');
+  }
+
+  if (!urlDatabase[shortURL]) {
+    return res.status(400).send('URL does not exist!');
+  }
+
+  const urlOwner = urlDatabase[shortURL].userID;
+
+  if (userID !== urlOwner) {
+    return res.send("Can be accessed only by url owner!");
+  }
+
+  urlDatabase[shortURL] = { longURL: newURL, userID: userID };
 
   res.redirect(302, '/urls');
 });
