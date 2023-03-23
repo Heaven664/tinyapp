@@ -19,19 +19,19 @@
       </div>
     </div>
     <% if (!user) { %>
-    <form action="/login" method="post">
-      <input
-      type="text"
-      name="username"
-      placeholder="Username"
-      autocomplete="off"
-      style="
-      padding: 6px 10px;
-      margin-right: 10px;
-      border: none;
-      border-radius: 6px;
-      "
-      >
+      <form action="/register" method="get">
+        <button type="submit"
+        style="
+          font-size: 20px;
+          background-color: inherit;
+          padding: 6px 14px;
+          margin-left: 12px;
+          border: 1.5px solid black;
+          border-radius: 6px;
+          cursor: pointer;">Register</button>
+      </form>
+
+    <form action="/login" method="get">
       <button type="submit"
       style="
         font-size: 20px;
@@ -43,13 +43,7 @@
         cursor: pointer;">Login</button>
     </form>
     <% } else { %>
-      <p style="
-        color: black;
-        font-size: 24px; 
-        font-weight: 250;
-        margin-bottom: 0;
-        ">Logged in as: <%= user.email %></p>
-      <form action="/logout" method="post">
+      <form action="/logout" method="post">  
         <button 
         type="submit"
         style="
