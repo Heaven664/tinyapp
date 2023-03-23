@@ -72,6 +72,11 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+app.get('/login', (req, res) => {
+  const templateVars = { user: users[req.cookies['user_id']] }
+  res.render('login', templateVars);
+});
+
 app.get('/register', (req, res) => {
   const templateVars = { user: users[req.cookies['user_id']] }
   res.render('register', templateVars);
