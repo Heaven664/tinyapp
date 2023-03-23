@@ -64,7 +64,10 @@
         </tbody>
       </table>
       <% } else { %>
-        <h3>Unauthorized users can not see URLs</h3>
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <svg style="height: 50px; padding-left: 25%;" class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+            <h4>Unauthorized users can not see URLs</h4>
+        </div>
       <% } %>
     </main>
   </body>
