@@ -1,39 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-      crossorigin="anonymous"
-    />
-    <title>TinyApp</title>
-  </head>
-  <body>
-    <main>
-      <%- include('partials/_header') %>
-      <form action="/register" method="post">
-        <input
-          type="email" 
-          name="email"
-          autocomplete="off"
-          placeholder="Email">
-          <br>
-        <input
-          type="password" 
-          name="password"
-          placeholder="Password">
-          <br>
-        <button type="submit">Register</button>
-      </form>
-    </main>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-  </body>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
+  <title>TinyApp</title>
+</head>
+
+<body>
+  <main>
+    <%- include('partials/_header') %>
+      <div style="margin-left: 25px; margin-top: 25px;">
+        <form action="/register" method="post">
+          <div class="form-group" style="width: 300px;">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" name="email" autocomplete="off" class="form-control" id="exampleInputEmail1"
+              aria-describedby="emailHelp" placeholder="Enter email">
+          </div>
+          <div class="form-group" style="width: 300px;">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword1"
+              placeholder="Password">
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+      </div>
+  </main>
+</body>
+
 </html>
