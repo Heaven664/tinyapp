@@ -88,11 +88,19 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  // redirects to /urls if user is logged in
+  if (req.cookies['user_id']) {
+    return res.redirect('/urls');
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('login', templateVars);
 });
 
 app.get('/register', (req, res) => {
+  // redirects to /urls if user is logged in
+  if (req.cookies['user_id']) {
+    return res.redirect('/urls');
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('register', templateVars);
 });
@@ -100,7 +108,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  
+
   // if user didn't provide password
   if (!email || !password) {
     return res.sendStatus(400);
