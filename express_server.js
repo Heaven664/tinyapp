@@ -64,8 +64,6 @@ function addUser(database, userId, userEmail, userPassword) {
   };
 }
 
-
-
 // Generates 6 random alpha-numeric characters
 function generateRandomString() {
   // Number of characters
@@ -84,6 +82,13 @@ function generateRandomString() {
   return randomString;
 };
 
+app.get('/', (req, res) => {
+  if (req.session.user_id) {
+    return res.redirect('/urls');
+  }
+  res.redirect('/login');
+});
+
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -92,12 +97,12 @@ app.post('/login', (req, res) => {
 
   // If user user not found in database
   if (!user) {
-    return res.sendStatus(403);
+    return res.status(403).send("Incorrect username or password");
   }
 
   // If password is not correct
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.sendStatus(403)
+    return res.status(403).send("Incorrect username or password");
   }
 
   req.session.user_id = user.id;
@@ -128,12 +133,12 @@ app.post('/register', (req, res) => {
 
   // if user didn't provide password
   if (!email || !password) {
-    return res.sendStatus(400);
+    return res.status(400).send("Please provide username and password");
   }
 
   // if email exist in database
   if (getUserByEmail(email, users)) {
-    return res.sendStatus(400);
+    return res.status(400).send("Username exists!");
   }
 
   const hashedPassword = bcrypt.hashSync(password,10);
@@ -148,10 +153,6 @@ app.post('/register', (req, res) => {
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/login');
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
 });
 
 app.get("/urls", (req, res) => {
@@ -254,7 +255,7 @@ app.post("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   if (!urlDatabase[shortURL]) {
-    res.status(400).send("this URL do not exist!");
+    return res.status(400).send("this URL do not exist!");
   }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
