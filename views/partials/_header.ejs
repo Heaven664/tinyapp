@@ -43,6 +43,12 @@
         cursor: pointer;">Login</button>
     </form>
     <% } else { %>
+      <p style="
+      color: black;
+      font-size: 24px; 
+      font-weight: 250;
+      margin-bottom: 0;
+      ">Logged in as: <%= user.email %></p>
       <form action="/logout" method="post">  
         <button 
         type="submit"
