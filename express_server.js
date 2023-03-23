@@ -61,10 +61,10 @@ function addUser(database, userId, userEmail, userPassword) {
 }
 
 // Checks if user is in a database by user's email
-function getUserByEmail(email) {
+function getUserByEmail(email, database) {
   let user = null;
-  for (let i in users) {
-    let person = users[i];
+  for (let i in database) {
+    let person = database[i];
     if (person.email === email) {
       user = person;
       break;
@@ -95,7 +95,7 @@ app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
 
   // If user user not found in database
   if (!user) {
@@ -139,7 +139,7 @@ app.post('/register', (req, res) => {
   }
 
   // if email exist in database
-  if (getUserByEmail(email)) {
+  if (getUserByEmail(email, users)) {
     return res.sendStatus(400);
   }
 
