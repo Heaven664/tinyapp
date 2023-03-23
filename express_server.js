@@ -70,7 +70,7 @@ app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  user = getUserByEmail(email);
+  const user = getUserByEmail(email);
 
   // If user user not found in database
   if (!user) {
@@ -119,11 +119,7 @@ app.post('/register', (req, res) => {
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  res.redirect('/urls');
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect('/login');
 });
 
 app.get("/urls.json", (req, res) => {
