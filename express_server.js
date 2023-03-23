@@ -43,6 +43,7 @@ function getUserByEmail(email) {
     let person = users[i];
     if (person.email === email) {
       user = person;
+      break;
     }
   }
   return user;
@@ -99,7 +100,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
+  
   // if user didn't provide password
   if (!email || !password) {
     return res.sendStatus(400);
