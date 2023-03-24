@@ -212,7 +212,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const newURL = req.body.newLongURL;
   const shortURL = req.params.id;

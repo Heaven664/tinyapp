@@ -20,7 +20,7 @@
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
-        <form action="/urls/<%= id %>" method="post">
+        <form action="/urls/<%= id %>?_method=PUT" method="post">
           <label for="newlongURL">New URL:</label>
           <input 
           type="text";
