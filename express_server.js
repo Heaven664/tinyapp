@@ -208,7 +208,6 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).render('error', errorMessage);
   }
 
-
   const templateVars = {
     id: urlID,
     longURL: urlDatabase[urlID].longURL,
