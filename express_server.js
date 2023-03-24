@@ -14,13 +14,15 @@ const urlDatabase = {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
     totalVisits: 0,
-    uniqueVisitors: []
+    uniqueVisitors: [],
+    logs: []
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
     totalVisits: 0,
-    uniqueVisitors: []
+    uniqueVisitors: [],
+    logs: []
   },
 };
 
@@ -145,7 +147,7 @@ app.post("/urls", (req, res) => {
   }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id, totalVisits: 0, uniqueVisitors: [] };
+  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id, totalVisits: 0, uniqueVisitors: [], logs: [] };
   res.redirect(302, `/urls/${shortUrl}`);
 });
 
@@ -181,6 +183,8 @@ app.delete("/urls/:id/delete", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const urlID = req.params.id;
+
+  console.log(urlDatabase);
 
   if (!userID) {
     const errorMessage = {
@@ -237,7 +241,7 @@ app.put("/urls/:id", (req, res) => {
     return res.status(400).send("Can be accessed only by url owner");
   }
 
-  urlDatabase[shortURL] = { userID, longURL: newURL, totalVisits: 0, uniqueVisitors: [] };
+  urlDatabase[shortURL] = { userID, longURL: newURL, totalVisits: 0, uniqueVisitors: [], logs: [] };
 
   res.redirect(302, '/urls');
 });
@@ -257,12 +261,23 @@ app.get("/u/:id", (req, res) => {
   // Update total visits of the URL
   urlDatabase[shortURL].totalVisits++;
 
-
   // Update unique visitors of the URL
   const uniqueVisitors = urlDatabase[shortURL].uniqueVisitors;
   if (!uniqueVisitors.includes(user)) {
     uniqueVisitors.push(user);
   }
+
+  let id = null;
+
+  if (!user) {
+    id = generateRandomString();
+  } else {
+    id = req.session.user_id;
+  }
+
+  const timestamp = Date.now();
+
+  urlDatabase[shortURL].logs[id] = timestamp;
 
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
