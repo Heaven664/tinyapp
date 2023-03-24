@@ -50,11 +50,19 @@ app.post('/login', (req, res) => {
   const user = getUserByEmail(email, users);
 
   if (!user) {
-    return res.status(403).send("Incorrect username or password");
+    const errorMessage = {
+      user,
+      message: 'User not found'
+    };
+    return res.status(403).render('error', errorMessage);
   }
 
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.status(403).send("Incorrect username or password");
+    const errorMessage = {
+      user,
+      message: 'Incorrect Password'
+    };
+    return res.status(403).render('error', errorMessage);
   }
 
   req.session.user_id = user.id;
@@ -83,13 +91,22 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const user = req.session.user_id;
 
   if (!email || !password) {
-    return res.status(400).send("Please provide username and password");
+    const errorMessage = {
+      user,
+      message: 'Please provide username and password'
+    };
+    return res.status(400).render('error', errorMessage);
   }
 
   if (getUserByEmail(email, users)) {
-    return res.status(400).send("Username exists!");
+    const errorMessage = {
+      user,
+      message: 'Username exists'
+    };
+    return res.status(400).render('error', errorMessage);
   }
 
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -160,17 +177,29 @@ app.get("/urls/:id", (req, res) => {
   const urlID = req.params.id;
 
   if (!userID) {
-    return res.status(403).send('Unauthorized users can not access urls');
+    const errorMessage = {
+      user: userID,
+      message: 'Unauthorized users can not access urls'
+    };
+    return res.status(403).render('error', errorMessage);
   }
 
   if (!urlDatabase[urlID]) {
-    return res.status(400).send('URL does not exist!');
+    const errorMessage = {
+      user: userID,
+      message: 'URL does not exist!'
+    };
+    return res.status(403).render('error', errorMessage);
   }
 
   const urlOwner = urlDatabase[urlID].userID;
 
   if (userID !== urlOwner) {
-    return res.send("Can be accessed only by url owner!");
+    const errorMessage = {
+      user: userID,
+      message: 'Can be accessed only by url owner!'
+    };
+    return res.status(403).render('error', errorMessage);
   }
 
   const templateVars = {
@@ -183,7 +212,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
-  const newURL = req.body.newlongURL;
+  const newURL = req.body.newLongURL;
   const shortURL = req.params.id;
 
   if (!userID) {
@@ -197,7 +226,7 @@ app.post("/urls/:id", (req, res) => {
   const urlOwner = urlDatabase[shortURL].userID;
 
   if (userID !== urlOwner) {
-    return res.status(400).send("Can be accessed only by url owner!");
+    return res.status(400).send("Can be accessed only by url owner");
   }
 
   urlDatabase[shortURL] = { userID, longURL: newURL };
@@ -207,8 +236,14 @@ app.post("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
+  const user = req.session.user_id;
+
   if (!urlDatabase[shortURL]) {
-    return res.status(400).send("this URL do not exist!");
+    const errorMessage = {
+      user,
+      message: 'URL does not exist'
+    };
+    return res.status(403).render('error', errorMessage);
   }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
