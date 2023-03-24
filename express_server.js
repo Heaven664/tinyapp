@@ -67,7 +67,7 @@ app.post('/login', (req, res) => {
 
   if (!bcrypt.compareSync(password, user.password)) {
     const errorMessage = {
-      user,
+      user: null,
       message: 'Incorrect Password'
     };
     return res.status(403).render('error', errorMessage);
