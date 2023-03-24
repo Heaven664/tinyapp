@@ -1,4 +1,4 @@
-// Checks if user is in a database by user's email
+// Checks if user is in a database by user's email, returns null if user not found or user object if found
 function getUserByEmail(email, database) {
   let user = null;
   for (let i in database) {
