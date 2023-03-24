@@ -212,6 +212,7 @@ app.get("/urls/:id", (req, res) => {
     id: urlID,
     longURL: urlDatabase[urlID].longURL,
     totalVisits: urlDatabase[urlID].totalVisits,
+    uniqueVisitors: urlDatabase[urlID].uniqueVisitors.length,
     user: users[req.session.user_id],
   };
   res.render("urls_show", templateVars);
@@ -265,7 +266,7 @@ app.get("/u/:id", (req, res) => {
   if (!uniqueVisitors.includes(user)) {
     uniqueVisitors.push(user);
   }
-  
+
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
