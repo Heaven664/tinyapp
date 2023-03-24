@@ -255,7 +255,7 @@ app.get("/u/:id", (req, res) => {
   }
 
   // Update total visits of the URL
-    urlDatabase[shortURL].totalVisits++;
+  urlDatabase[shortURL].totalVisits++;
 
   // Update unique visitors of the URL
   const uniqueVisitors = urlDatabase[shortURL].uniqueVisitors;
