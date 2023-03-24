@@ -145,7 +145,7 @@ app.post("/urls", (req, res) => {
   }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
-  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id };
+  urlDatabase[shortUrl] = { longURL: fullUrl, userID: id, totalVisits: 0, uniqueVisitors: [] };
   res.redirect(302, `/urls/${shortUrl}`);
 });
 
@@ -255,12 +255,8 @@ app.get("/u/:id", (req, res) => {
   }
 
   // Update total visits of the URL
-  if (urlDatabase[shortURL].totalVisits) {
     urlDatabase[shortURL].totalVisits++;
-  } else {
-    urlDatabase[shortURL].totalVisits = 1;
-  }
-  
+
   // Update unique visitors of the URL
   const uniqueVisitors = urlDatabase[shortURL].uniqueVisitors;
   if (!uniqueVisitors.includes(user)) {
