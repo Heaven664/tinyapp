@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 const { getUserByEmail, generateRandomString, addUser, urlsForUser } = require('./helpers');
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
+app.use(methodOverride('_method'));
 
 app.get('/', (req, res) => {
   if (req.session.user_id) {
@@ -152,7 +154,7 @@ app.get("/urls/new", (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/delete", (req, res) => {
   const userID = req.session.user_id;
   const urlID = req.params.id;
 
