@@ -15,7 +15,7 @@ const urlDatabase = {
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "bJ48lW",
+    userID: "aJ48lW",
   },
 };
 
@@ -24,11 +24,6 @@ const users = {
     id: "aJ48lW",
     email: "a@a.com",
     password: "$2a$10$aD/LJN4yGT6KVWaN9Vn8UuwY.i8Rwzp21lXHBKuw4gcJ4zgHE3oPK",
-  },
-  bJ48l: {
-    id: "bJ48lW",
-    email: "b@b.com",
-    password: "1234",
   },
 };
 
