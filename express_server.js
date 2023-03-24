@@ -110,7 +110,7 @@ app.post('/register', (req, res) => {
   if (getUserByEmail(email, users)) {
     const errorMessage = {
       user,
-      message: 'Username exists'
+      message: 'Email exists'
     };
     return res.status(400).render('error', errorMessage);
   }
@@ -208,6 +208,7 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).render('error', errorMessage);
   }
 
+
   const templateVars = {
     id: urlID,
     longURL: urlDatabase[urlID].longURL,
@@ -237,7 +238,7 @@ app.put("/urls/:id", (req, res) => {
     return res.status(400).send("Can be accessed only by url owner");
   }
 
-  urlDatabase[shortURL] = { userID, longURL: newURL };
+  urlDatabase[shortURL] = { userID, longURL: newURL, totalVisits: 0, uniqueVisitors: [] };
 
   res.redirect(302, '/urls');
 });
@@ -256,6 +257,7 @@ app.get("/u/:id", (req, res) => {
 
   // Update total visits of the URL
   urlDatabase[shortURL].totalVisits++;
+
 
   // Update unique visitors of the URL
   const uniqueVisitors = urlDatabase[shortURL].uniqueVisitors;
