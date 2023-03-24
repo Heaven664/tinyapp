@@ -1,12 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const cookieSession = require('cookie-session')
-const { getUserByEmail } = require('./helpers');
-
-
+const cookieSession = require('cookie-session');
+const { getUserByEmail, generateRandomString, addUser, urlsForUser } = require('./helpers');
 
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
 app.set("view engine", "ejs");
 
@@ -42,45 +40,7 @@ app.use(cookieSession({
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
-
-// Returns obj with urls which have same userID
-function urlsForUser(id) {
-  const newObj = { ...urlDatabase };
-  for (let url in newObj) {
-    if (newObj[url].userID !== id) {
-      delete newObj[url];
-    }
-  }
-  return newObj;
-};
-
-// Adds a new user to a database
-function addUser(database, userId, userEmail, userPassword) {
-  database[userId] = {
-    id: userId,
-    email: userEmail,
-    password: userPassword
-  };
-}
-
-// Generates 6 random alpha-numeric characters
-function generateRandomString() {
-  // Number of characters
-  const times = 6;
-  let randomString = '';
-  // Gets random number between 0 to 35 and generates random alpha-numeric character on base 36(0-z)
-  for (let i = 0; i < times; i++) {
-    let charIndex = Math.floor(Math.random() * 36);
-    let randomChar = charIndex.toString(36);
-    if (Math.random() < 0.5) {
-      randomString += randomChar.toUpperCase();
-    } else {
-      randomString += randomChar;
-    }
-  }
-  return randomString;
-};
+}));
 
 app.get('/', (req, res) => {
   if (req.session.user_id) {
@@ -92,15 +52,12 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
   const user = getUserByEmail(email, users);
 
-  // If user user not found in database
   if (!user) {
     return res.status(403).send("Incorrect username or password");
   }
 
-  // If password is not correct
   if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Incorrect username or password");
   }
@@ -110,20 +67,21 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  // redirects to /urls if user is logged in
-  if (req.session.user_id) {
+  const id = req.session.user_id;
+
+  if (id) {
     return res.redirect('/urls');
   }
-  const templateVars = { user: users[req.session.user_id] };
+  const templateVars = { user: users[id] };
   res.render('login', templateVars);
 });
 
 app.get('/register', (req, res) => {
-  // redirects to /urls if user is logged in
-  if (req.session.user_id) {
+  const id = req.session.user_id;
+  if (id) {
     return res.redirect('/urls');
   }
-  const templateVars = { user: users[req.session.user_id] };
+  const templateVars = { user: users[id] };
   res.render('register', templateVars);
 });
 
@@ -131,20 +89,17 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // if user didn't provide password
   if (!email || !password) {
     return res.status(400).send("Please provide username and password");
   }
 
-  // if email exist in database
   if (getUserByEmail(email, users)) {
     return res.status(400).send("Username exists!");
   }
 
-  const hashedPassword = bcrypt.hashSync(password,10);
-
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
-  // adds user to the database
+
   addUser(users, id, email, hashedPassword);
   req.session.user_id = id;
   res.redirect('/urls');
@@ -158,7 +113,7 @@ app.post('/logout', (req, res) => {
 app.get("/urls", (req, res) => {
   const id = req.session.user_id;
   const templateVars = {
-    urls: urlsForUser(id),
+    urls: urlsForUser(id, urlDatabase),
     user: users[id]
   };
   res.render("urls_index", templateVars);
@@ -168,7 +123,7 @@ app.post("/urls", (req, res) => {
   const id = req.session.user_id;
 
   if (!id) {
-    return res.send('unauthorized users can not shorten URLs');
+    return res.status(403).send('unauthorized users can not shorten URLs');
   }
   const shortUrl = generateRandomString();
   const fullUrl = req.body.longURL;
@@ -177,11 +132,11 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  // redirects to /urls if user is NOT logged in
-  if (!req.session.user_id) {
+  const id = req.session.user_id;
+  if (!id) {
     return res.redirect('/login');
   }
-  const templateVars = { user: users[req.session.user_id] };
+  const templateVars = { user: users[id] };
   res.render('urls_new', templateVars);
 });
 
@@ -208,6 +163,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const urlID = req.params.id;
+
   if (!userID) {
     return res.status(403).send('Unauthorized users can not access urls');
   }
@@ -217,9 +173,11 @@ app.get("/urls/:id", (req, res) => {
   }
 
   const urlOwner = urlDatabase[urlID].userID;
+
   if (userID !== urlOwner) {
     return res.send("Can be accessed only by url owner!");
   }
+
   const templateVars = {
     id: urlID,
     longURL: urlDatabase[urlID].longURL,
@@ -244,10 +202,10 @@ app.post("/urls/:id", (req, res) => {
   const urlOwner = urlDatabase[shortURL].userID;
 
   if (userID !== urlOwner) {
-    return res.send("Can be accessed only by url owner!");
+    return res.status(400).send("Can be accessed only by url owner!");
   }
 
-  urlDatabase[shortURL] = { longURL: newURL, userID: userID };
+  urlDatabase[shortURL] = { userID, longURL: newURL };
 
   res.redirect(302, '/urls');
 });
