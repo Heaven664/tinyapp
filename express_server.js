@@ -266,15 +266,10 @@ app.get("/u/:id", (req, res) => {
     uniqueVisitors.push(user);
   }
 
-  let id = null;
+  let id = generateRandomString();
 
-  if (!user) {
-    id = generateRandomString();
-  } else {
-    id = req.session.user_id;
-  }
-
-  const timestamp = Date.now();
+  const timestamp = new Date(Date.now());
+  timestamp.setUTCMinutes(0);
 
   urlDatabase[shortURL].logs[id] = timestamp;
 
