@@ -184,8 +184,6 @@ app.get("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const urlID = req.params.id;
 
-  console.log(urlDatabase);
-
   if (!userID) {
     const errorMessage = {
       user: userID,
