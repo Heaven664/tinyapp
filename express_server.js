@@ -13,10 +13,12 @@ const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
+    totalVisits: 0
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
+    totalVisits: 0
   },
 };
 
@@ -207,6 +209,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: urlID,
     longURL: urlDatabase[urlID].longURL,
+    totalVisits: urlDatabase[urlID].totalVisits,
     user: users[req.session.user_id],
   };
   res.render("urls_show", templateVars);
@@ -247,6 +250,14 @@ app.get("/u/:id", (req, res) => {
     };
     return res.status(403).render('error', errorMessage);
   }
+
+  // Update total visits of the URL
+  if (urlDatabase[shortURL].totalVisits) {
+    urlDatabase[shortURL].totalVisits++;
+  } else {
+    urlDatabase[shortURL].totalVisits = 1;
+  }
+  
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
