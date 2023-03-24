@@ -218,6 +218,7 @@ app.get("/urls/:id", (req, res) => {
     totalVisits: urlDatabase[urlID].totalVisits,
     uniqueVisitors: urlDatabase[urlID].uniqueVisitors.length,
     user: users[req.session.user_id],
+    logs: urlDatabase[urlID].logs
   };
   res.render("urls_show", templateVars);
 });

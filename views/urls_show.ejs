@@ -35,5 +35,20 @@
       </div>
       <div class="card-footer text-muted"></div>
     </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">User ID</th>
+          <th scope="col">Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let log in logs) { %>
+          <tr>
+            <td><%= log %></td>
+            <td><%= logs[log] %></td>
+          </tr>
+        <% } %>
+      </tbody>
   </body>
 </html>
