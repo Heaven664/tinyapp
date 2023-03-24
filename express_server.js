@@ -13,12 +13,14 @@ const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
-    totalVisits: 0
+    totalVisits: 0,
+    uniqueVisitors: []
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
-    totalVisits: 0
+    totalVisits: 0,
+    uniqueVisitors: []
   },
 };
 
@@ -256,6 +258,12 @@ app.get("/u/:id", (req, res) => {
     urlDatabase[shortURL].totalVisits++;
   } else {
     urlDatabase[shortURL].totalVisits = 1;
+  }
+  
+  // Update unique visitors of the URL
+  const uniqueVisitors = urlDatabase[shortURL].uniqueVisitors;
+  if (!uniqueVisitors.includes(user)) {
+    uniqueVisitors.push(user);
   }
   
   const longURL = urlDatabase[shortURL].longURL;
